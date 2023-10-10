@@ -1,0 +1,11 @@
+name: Run this job every 5 minutes
+on:
+  schedule:
+    - cron: '*/5 * * * *'
+jobs:
+  issue:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Echoing scheduling success
+        run: |
+          echo "Logging after 5 mins"
