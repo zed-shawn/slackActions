@@ -2,26 +2,28 @@ name: Run this job every 5 minutes
 on:
   workflow_dispatch:
 jobs:
-    build:
-      # Name the Job
-      name: Run Unit Tests
-      # Set the agent to run on
-      runs-on: ubuntu-latest
-  
-      steps:
-        - name: Checkout Code
-          uses: actions/checkout@v3
-        #- name: Install modules
-        #  run: yarn
-        #- name: Run tests
-        #  run: yarn test
-        - name: Run Unit Tests
-          uses: ArtiomTr/jest-coverage-report-action@v2
-          id: coverage
-          with:
-            package-manager: yarn
-            test-script: yarn jest --ci --json --coverage --detectOpenHandles --runInBand --forceExit --testLocationInResults --outputFile=report.json
-            output: report-markdown
-        - uses: marocchino/sticky-pull-request-comment@v2
-          with:
-            message: ${{ steps.coverage.outputs.report }}
+  build:
+    # Name the Job
+    name: Run Unit Tests
+    # Set the agent to run on
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v3
+      #- name: Install modules
+      #  run: yarn
+      #- name: Run tests
+      #  run: yarn test
+      - name: Run Unit Tests
+        uses: ArtiomTr/jest-coverage-report-action@v2
+        id: coverage
+        with:
+          package-manager: yarn
+          test-script: yarn jest --ci --json --coverage --detectOpenHandles --runInBand --forceExit --testLocationInResults --outputFile=report.json
+          output: report-markdown
+      - name: Slack Notification
+        uses: rtCamp/action-slack-notify@v2
+        env:
+          SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK }}
+          SLACK_MESSAGE: 'Post Content :rocket:'
